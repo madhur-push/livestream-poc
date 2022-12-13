@@ -1,0 +1,69 @@
+.Header{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.Main{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Playback{
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  background-color: #161618;
+  height: 80vh;
+  width: 900px;
+}
+
+.Stream {
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  background-color: #161618;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(237, 237, 239);
+}
+
+.Stream-input {
+  height: 42px;
+  width: 300px;
+  background: none;
+  border: 1px solid rgb(158, 140, 252);
+  margin: 6px;
+  color: rgb(237, 237, 239);
+  font-size: 21px;
+  text-align: center;
+  border-radius: 3px;
+}
+
+.Stream-video {
+  height: 300px;
+  width: 400px;
+  border: 1px solid rgb(158, 140, 252);
+  margin: 30px;
+  background-color: black;
+  border-radius: 3px;
+}
+
+.Stream-button {
+  margin-top: 20px;
+  height: 42px;
+  padding: 5px;
+  font-size: large;
+  border-radius: 3px;
+  border: 1px solid rgb(158, 140, 252);
+  color: rgb(237, 237, 239);
+  background: none;
+  cursor: pointer;
+}
