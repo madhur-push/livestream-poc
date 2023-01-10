@@ -23,7 +23,7 @@ function App() {
       <Header />
       <div className="Main">
         <Playback />
-        <Stream />
+        {/* <Stream /> */}
       </div>
     </LivepeerConfig>
   );

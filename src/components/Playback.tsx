@@ -1,40 +1,39 @@
-import { useState, useRef } from "react";
+import { Text, Box, Input } from "@chakra-ui/react";
 import { Player } from "@livepeer/react";
+import { parseArweaveTxId, parseCid } from "livepeer/media";
 
-const Playback = () => {
-  const [playbackId, setPlaybackId] = useState("");
-  const inputEl = useRef(null);
+import { useMemo, useState } from "react";
 
-  const initiatePlaybackHandler = () => {
-    const newPlaybackId = inputEl?.current?.value;
-    if (newPlaybackId) {
-      setPlaybackId(newPlaybackId);
-    }
-  };
+export const Playback = () => {
+  const [url, setUrl] = useState<string>("");
+
+  const idParsed = useMemo(() => parseCid(url) ?? parseArweaveTxId(url), [url]);
 
   return (
-    <div className="Stream">
-      <input
-        className="Stream-input"
-        ref={inputEl}
-        type="text"
-        placeholder="Playback ID"
-      />
-      <div className="Stream-video" style={{ color: "white" }}>
-        {playbackId ? (
-          <Player
-            title="Incoming Video"
-            playbackId={playbackId}
-            showPipButton
-          />
-        ) : (
-          <>Please enter a playback Id.</>
+    <>
+      <Box>
+        <Text>IPFS or Arweave URL</Text>
+        <Input
+          type="text"
+          placeholder="ipfs://... or ar://"
+          onChange={(e) => setUrl(e.target.value)}
+        />
+
+        {url && !idParsed && (
+          <Text>Provided value is not a valid identifier.</Text>
         )}
-      </div>
-      <button className="Stream-button" onClick={initiatePlaybackHandler}>
-        Start Playback
-      </button>
-    </div>
+      </Box>
+
+      {idParsed && (
+        <Player
+          title={idParsed.id}
+          src={url}
+          autoPlay
+          muted
+          autoUrlUpload={{ fallback: true, ipfsGateway: "https://w3s.link" }}
+        />
+      )}
+    </>
   );
 };
 
