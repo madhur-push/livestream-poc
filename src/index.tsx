@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 
 import App from './App';
-import Host from './components/Host';
 import Participant from './components/Participant';
 import Viewer from './components/Viewer';
 
@@ -20,7 +19,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/host",
-    element: <Host/>,
+    element: <Participant isHost={true}/>,
   },
   {
     path: "/participant",
