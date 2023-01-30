@@ -6,17 +6,18 @@ import { useEffect } from "react";
 import useStreamStore from "../store/useStreamStore";
 
 const Participant = ({ isHost = false }) => {
-  const { localStream, addLocalStream, incomingStreams, addIncomingStream } = useStreamStore((state) => ({
-    localStream: state.localStream,
-    addLocalStream: state.addLocalStream,
-    incomingStreams: state.incomingStreams,
-    addIncomingStream: state.addIncomingStream,
-  }));
+  const { localStream, addLocalStream, incomingStreams, addIncomingStream } =
+    useStreamStore((state) => ({
+      localStream: state.localStream,
+      addLocalStream: state.addLocalStream,
+      incomingStreams: state.incomingStreams,
+      addIncomingStream: state.addIncomingStream,
+    }));
 
   const peerIdInputRef = useRef();
   const [myPeer, myPeerId] = usePeer();
 
-  const connectParticipantHandler = async () => {
+  const connectParticipantHandler = () => {
     try {
       const connectPeerId = peerIdInputRef.current.value;
       console.log("connectPeerId", connectPeerId);
@@ -25,15 +26,26 @@ const Participant = ({ isHost = false }) => {
       // connecting with remote peer to send a message
       var connection = myPeer.connect(connectPeerId);
       connection.on("open", () => {
-        connection.send('Sender -> '+myPeerId);
+        connection.send("Sender -> " + myPeerId);
       });
-
 
       // calling remote peer with local stream
       const call = myPeer.call(connectPeerId, localStream);
+      let id; // dirty fix for stream callback getting invoked twice
+      // reference - https://github.com/peers/peerjs/issues/781#issuecomment-766094333
       call.on("stream", (newIncomingStream) => {
-        console.log("V/A connection with", connectPeerId, "successful");
-        addIncomingStream({stream: newIncomingStream, peerId: connectPeerId});
+        if (id !== newIncomingStream.id) {
+          id = newIncomingStream.id;
+          console.log("V/A connection with", connectPeerId, "successful");
+          console.log("new incoming stream id", id);
+          console.log(
+            "ADD INCOMING STREAM ABOUT TO BE TRIGGERED WHILE CALLING"
+          );
+          addIncomingStream({
+            stream: newIncomingStream,
+            peerId: connectPeerId,
+          });
+        }
       });
 
       //  handling error
@@ -63,11 +75,11 @@ const Participant = ({ isHost = false }) => {
   }, [addLocalStream]);
 
   return (
-    <Flex direction="column" align="center">
+    <Flex direction="column" align="center" paddingBottom={2}>
       <Heading marginY="2%">{isHost ? "Host" : "Participant"}</Heading>
       <Text marginY="1%">peer Id - {myPeerId}</Text>
 
-      <Flex marginY="2%" direction="column" width="20%">
+      <Flex marginY="1%" direction="column" width="20%">
         <Input
           placeholder="enter a peer id to connect with"
           ref={peerIdInputRef}
@@ -77,20 +89,21 @@ const Participant = ({ isHost = false }) => {
         </Button>
       </Flex>
 
-      <Text marginY="1%">My Stream</Text>
+      <Text marginTop={1} marginBottom={2}>Remote Stream(s)</Text>
+      <Flex wrap="wrap" border="2px solid grey" padding={2} marginBottom={4}>
+        {incomingStreams.length !== 0
+          ? incomingStreams.map(({ stream: incomingStream, peerId: id }) => (
+              <VideoPlayer key={id} videoStream={incomingStream} />
+            ))
+          : "No connected participants as of now."}
+      </Flex>
+
+      <Text marginY="1%">Local Stream</Text>
       {localStream ? (
         <VideoPlayer videoStream={localStream} />
       ) : (
         "Loading local stream..."
       )}
-
-      <Flex wrap="wrap">
-        {incomingStreams.length !== 0
-          ? incomingStreams.map(({stream: incomingStream, peerId: id}) => (
-              <VideoPlayer key={id} videoStream={incomingStream} />
-            ))
-          : "No connected participants as of now."}
-      </Flex>
     </Flex>
   );
 };

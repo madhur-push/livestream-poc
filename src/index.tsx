@@ -1,16 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import App from './App';
-import Participant from './components/Participant';
-import Viewer from './components/Viewer';
+import App from "./App";
+import Participant from "./components/Participant";
+import Viewer from "./components/Viewer";
 
-import { ChakraProvider } from '@chakra-ui/react'
-import './index.css';
+import { ChakraProvider } from "@chakra-ui/react";
+import "./index.css";
 
 const router = createBrowserRouter([
   {
@@ -32,12 +29,10 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <ChakraProvider resetCSS={true}>
-      <RouterProvider router={router} />
-    </ChakraProvider>
-  </React.StrictMode>
+  <ChakraProvider resetCSS={true}>
+    <RouterProvider router={router} />
+  </ChakraProvider>
 );
