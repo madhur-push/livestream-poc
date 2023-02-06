@@ -1,18 +1,24 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import usePeer from "../hooks/usePeer";
-import { Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
 import VideoPlayer from "./VideoPlayer";
 import { useEffect } from "react";
 import useStreamStore from "../store/useStreamStore";
 
 const Participant = ({ isHost = false }) => {
-  const { localStream, addLocalStream, incomingStreams, addIncomingStream } =
-    useStreamStore((state) => ({
-      localStream: state.localStream,
-      addLocalStream: state.addLocalStream,
-      incomingStreams: state.incomingStreams,
-      addIncomingStream: state.addIncomingStream,
-    }));
+  const {
+    localStream,
+    liveStreamPlaybackId,
+    addLocalStream,
+    incomingStreams,
+    addIncomingStream,
+  } = useStreamStore((state) => ({
+    localStream: state.localStream,
+    liveStreamPlaybackId: state.liveStreamPlaybackId,
+    addLocalStream: state.addLocalStream,
+    incomingStreams: state.incomingStreams,
+    addIncomingStream: state.addIncomingStream,
+  }));
 
   const peerIdInputRef = useRef();
   const [myPeer, myPeerId] = usePeer();
@@ -57,6 +63,11 @@ const Participant = ({ isHost = false }) => {
     }
   };
 
+  const startStream = async ()=>{
+    // stitch the streams
+    // upload to live peer
+  }
+
   useEffect(() => {
     // retrieving my stream and setting the localStream present in global state
     const getMyStream = async () => {
@@ -89,7 +100,11 @@ const Participant = ({ isHost = false }) => {
         </Button>
       </Flex>
 
-      <Text marginTop={1} marginBottom={2}>Remote Stream(s)</Text>
+      <Divider />
+
+      <Text marginTop={1} marginBottom={2}>
+        Remote Stream(s)
+      </Text>
       <Flex wrap="wrap" border="2px solid grey" padding={2} marginBottom={4}>
         {incomingStreams.length !== 0
           ? incomingStreams.map(({ stream: incomingStream, peerId: id }) => (
@@ -97,6 +112,21 @@ const Participant = ({ isHost = false }) => {
             ))
           : "No connected participants as of now."}
       </Flex>
+
+      <Divider />
+
+      {isHost && (
+        <Flex direction="column" my={5}>
+          <Button mb={3} onClick={startStream}>Start Live Stream</Button>
+          <Text fontWeight="bold">
+            {liveStreamPlaybackId
+              ? liveStreamPlaybackId
+              : "Live stream not started yet"}
+          </Text>
+        </Flex>
+      )}
+
+      <Divider />
 
       <Text marginY="1%">Local Stream</Text>
       {localStream ? (
