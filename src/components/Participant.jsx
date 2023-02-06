@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import usePeer from "../hooks/usePeer";
-import { Box, Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import { Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
 import VideoPlayer from "./VideoPlayer";
 import { useEffect } from "react";
 import useStreamStore from "../store/useStreamStore";
+import getMergedStreams from "../utils/getMergedStreams";
 
 const Participant = ({ isHost = false }) => {
   const {
@@ -19,6 +20,8 @@ const Participant = ({ isHost = false }) => {
     incomingStreams: state.incomingStreams,
     addIncomingStream: state.addIncomingStream,
   }));
+
+  // const [liveStream, setLiveStream] = useState(null);
 
   const peerIdInputRef = useRef();
   const [myPeer, myPeerId] = usePeer();
@@ -63,10 +66,13 @@ const Participant = ({ isHost = false }) => {
     }
   };
 
-  const startStream = async ()=>{
+  const startLiveStream = async () => {
     // stitch the streams
+    // setLiveStream(getMergedStreams(localStream, incomingStreams));
+    const mergedStreams = getMergedStreams(localStream, incomingStreams);
+
     // upload to live peer
-  }
+  };
 
   useEffect(() => {
     // retrieving my stream and setting the localStream present in global state
@@ -116,13 +122,18 @@ const Participant = ({ isHost = false }) => {
       <Divider />
 
       {isHost && (
-        <Flex direction="column" my={5}>
-          <Button mb={3} onClick={startStream}>Start Live Stream</Button>
-          <Text fontWeight="bold">
-            {liveStreamPlaybackId
-              ? liveStreamPlaybackId
-              : "Live stream not started yet"}
-          </Text>
+        <Flex direction="column" align="center" my={5}>
+          <Button mb={3} onClick={startLiveStream}>
+            Start Live Stream
+          </Button>
+          <Text marginY="1%">Playback Id</Text>
+          <Text>{liveStreamPlaybackId ? liveStreamPlaybackId : ""}</Text>
+          {/* <Text marginY="1%">Live Stream Output</Text>
+          {liveStream ? (
+            <VideoPlayer videoStream={liveStream} />
+          ) : (
+            "Live stream not started yet"
+          )} */}
         </Flex>
       )}
 
