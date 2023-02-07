@@ -1,10 +1,12 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import { Client } from "@livepeer/webrtmp-sdk";
+
 import usePeer from "../hooks/usePeer";
-import { Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
-import VideoPlayer from "./VideoPlayer";
-import { useEffect } from "react";
 import useStreamStore from "../store/useStreamStore";
-import getMergedStreams from "../utils/getMergedStreams";
+import getMergedStream from "../utils/getMergedStream";
+import VideoPlayer from "./VideoPlayer";
+
+import { Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
 
 const Participant = ({ isHost = false }) => {
   const {
@@ -68,10 +70,28 @@ const Participant = ({ isHost = false }) => {
 
   const startLiveStream = async () => {
     // stitch the streams
-    // setLiveStream(getMergedStreams(localStream, incomingStreams));
-    const mergedStreams = getMergedStreams(localStream, incomingStreams);
+    // setLiveStream(getMergedStream(localStream, incomingStreams));
+    const mergedStream = getMergedStream(localStream, incomingStreams);
 
     // upload to live peer
+    const streamKey = process.env.LIVEPEER_STREAM_KEY;
+
+    const client = new Client();
+
+    const session = client.cast(mergedStream, streamKey);
+
+    session.on("open", () => {
+      console.log("Live stream started.");
+      alert("Live stream started.");
+    });
+
+    session.on("close", () => {
+      console.log("Live stream stopped.");
+    });
+
+    session.on("error", (err) => {
+      console.log("Live stream error.", err.message);
+    });
   };
 
   useEffect(() => {
