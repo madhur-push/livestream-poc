@@ -11,21 +11,18 @@ import { Button, Divider, Flex, Heading, Input, Text } from "@chakra-ui/react";
 const Participant = ({ isHost = false }) => {
   const {
     localStream,
-    liveStreamPlaybackId,
     addLocalStream,
     incomingStreams,
     addIncomingStream,
   } = useStreamStore((state) => ({
     localStream: state.localStream,
-    liveStreamPlaybackId: state.liveStreamPlaybackId,
     addLocalStream: state.addLocalStream,
     incomingStreams: state.incomingStreams,
     addIncomingStream: state.addIncomingStream,
   }));
 
-  // const [liveStream, setLiveStream] = useState(null);
-
   const peerIdInputRef = useRef();
+  const streamKeyInputRef = useRef();
   const [myPeer, myPeerId] = usePeer();
 
   const connectParticipantHandler = () => {
@@ -70,11 +67,10 @@ const Participant = ({ isHost = false }) => {
 
   const startLiveStream = async () => {
     // stitch the streams
-    // setLiveStream(getMergedStream(localStream, incomingStreams));
     const mergedStream = getMergedStream(localStream, incomingStreams);
 
     // upload to live peer
-    const streamKey = process.env.LIVEPEER_STREAM_KEY;
+    const streamKey = streamKeyInputRef.current.value;
 
     const client = new Client();
 
@@ -141,29 +137,22 @@ const Participant = ({ isHost = false }) => {
 
       <Divider />
 
-      {isHost && (
-        <Flex direction="column" align="center" my={5}>
-          <Button mb={3} onClick={startLiveStream}>
-            Start Live Stream
-          </Button>
-          <Text marginY="1%">Playback Id</Text>
-          <Text>{liveStreamPlaybackId ? liveStreamPlaybackId : ""}</Text>
-          {/* <Text marginY="1%">Live Stream Output</Text>
-          {liveStream ? (
-            <VideoPlayer videoStream={liveStream} />
-          ) : (
-            "Live stream not started yet"
-          )} */}
-        </Flex>
-      )}
-
-      <Divider />
-
       <Text marginY="1%">Local Stream</Text>
       {localStream ? (
         <VideoPlayer videoStream={localStream} />
       ) : (
         "Loading local stream..."
+      )}
+
+      <Divider />
+
+      {isHost && (
+        <Flex direction="column" align="center" my={5}>
+          <Input ref={streamKeyInputRef} type="text" placeholder="Stream Key" />
+          <Button mt={5} onClick={startLiveStream}>
+            Start Playback
+          </Button>
+        </Flex>
       )}
     </Flex>
   );

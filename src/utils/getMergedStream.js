@@ -9,9 +9,9 @@ const getMergedStreams = (localStream, incomingStreams) => {
   // Add the local stream. Position it on the bottom left and resize it to 100x100.
   merger.addStream(localStream, {
     x: 0,
-    y: merger.height - 100,
-    width: 100,
-    height: 100,
+    y: merger.height - 250,
+    width: 200,
+    height: 200,
     mute: false,
     index: 1,
   });
@@ -19,10 +19,10 @@ const getMergedStreams = (localStream, incomingStreams) => {
   // Add the incoming streams one by one
   incomingStreams.forEach(({peerId, stream}, i) => {
     merger.addStream(stream, {
-      x: i*160,
+      x: i*210,
       y: 50,
-      width: 150,
-      height: 150,
+      width: 200,
+      height: 200,
       mute: false,
       index: 0,
     });

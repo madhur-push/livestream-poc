@@ -7,9 +7,6 @@ const useStreamStore = create((set) => ({
   // remote streams
   incomingStreams: [],
 
-  // livestream playback Id from livepeer
-  liveStreamPlaybackId:null,
-
   addLocalStream: (localStream) => {
     set(() => ({
       localStream,
@@ -43,13 +40,6 @@ const useStreamStore = create((set) => ({
         (incomingStream) => incomingStream.peerId !== removePeerId
       ),
     })),
-    
-  addLiveStreamPlaybackId: (newPlaybackId) => 
-  set(
-    () => ({
-      liveStreamPlaybackId: newPlaybackId
-    })
-  )
 }));
 
 export default useStreamStore;
